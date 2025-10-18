@@ -9,18 +9,18 @@ exports.addBudget = asyncWrapper(async (req, res, next) => {
 });
 
 exports.getBudget = asyncWrapper(async (req,res,next)=>{
-    const {page, limit, amount,category, date, type} = req.query;
+    const {page, limit,category, type, sortby} = req.query;
     const filter = {};
-    if(amount) filter.amount = { $gte: Number(amount) };
     if(category) filter.category = category;
-    if(date) filter.date = { $gte: new Date(date), $lt: new Date(new Date(date).getTime() + 24 * 60 * 60 * 1000) };
     if(type) filter.type = type;
+    if(sortby === 'amount') filter.sortby = {amount: -1};
+    if(sortby === 'date') filter.sortby = {date: -1};
     const options = {page, limit};
     const result = await paginate(Budget, filter, options, {date: -1, amount: -1});
     const income = result.data.filter(item => item.type === 'income').reduce((acc, curr) => acc + curr.amount, 0);
     const expense = result.data.filter(item => item.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
     const total = income - expense;
-    return res.status(200).json({status: "success", date: result.data, pagination: result.pagination, income, expense, total});
+    return res.status(200).json({status: "success", data: result.data, pagination: result.pagination, income, expense, total});
 });
 
 exports.deleteBudget = asyncWrapper(async (req,res,next)=>{
