@@ -1,7 +1,7 @@
 const {Budget} = require('../models/budgetModel');
 const AppError = require('../utils/appError');
 const asyncWrapper = require('../utils/asyncWrapper');
-const {paginate} = require('../utils/paginate');
+const {paginate} = require('../utils/paginate')
 
 const countBudgetTotals = async () => {
     const budgetData = await Budget.find();
